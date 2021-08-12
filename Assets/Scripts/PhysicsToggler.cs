@@ -13,6 +13,6 @@ public class PhysicsToggler : MonoBehaviour
     }
     public void TogglePhysics()
     {
-        rb.isKinematic = !rb.isKinematic;
+        rb.isKinematic = false;
     }
 }

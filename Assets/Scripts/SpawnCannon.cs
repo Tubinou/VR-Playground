@@ -14,8 +14,8 @@ public class SpawnCannon : MonoBehaviour
     [SerializeField] Transform SpawnPosition;
     [SerializeField] GameObject SpawnPrefab;
 
-    public float currentForce = 1;
-    public string currentText = $"Power: 1/100";
+    public float currentForce = 20;
+    public string currentText = $"Power: 20/100";
 
     public float currentMass = 10f;
     public float currentSize = 1f;

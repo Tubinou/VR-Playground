@@ -9,8 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: WallRoom1
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: _EMISSION
-  m_LightmapFlags: 2
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -73,5 +73,5 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.43921572, g: 0.9254902, b: 0.5788246, a: 1}
-    - _EmissionColor: {r: 0.6081762, g: 0.30838376, b: 0.6603774, a: 1}
+    - _Color: {r: 0.10588236, g: 0.54741496, b: 0.99215686, a: 1}
+    - _EmissionColor: {r: 0.29456943, g: 0.13643645, b: 0.3962264, a: 1}

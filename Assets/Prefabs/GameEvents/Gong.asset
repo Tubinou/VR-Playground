@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f336cf633a9f9864a819354b58f04b9d, type: 3}
-  m_Name: SquashGameThreshold
+  m_Name: Gong
   m_EditorClassIdentifier: 
   subscribers: []

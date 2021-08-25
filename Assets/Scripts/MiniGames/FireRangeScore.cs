@@ -5,8 +5,10 @@ using TMPro;
 
 public class FireRangeScore : MonoBehaviour
 {
+    [SerializeField] int thresholdScore;
+    [SerializeField] GameEvent thresholdEvent;
     [SerializeField] TextMeshPro scoreText;
-    [SerializeField] float gameTime = 60f;
+    [SerializeField] float gameTime = 30f;
     public int score = 0;
     public bool gameOn = false;
 
@@ -23,7 +25,11 @@ public class FireRangeScore : MonoBehaviour
         {
             timer -= Time.deltaTime;
             string timerString = timer.ToString("F2");
-            scoreText.text = $"{timerString} left,\n Score {score}";
+            scoreText.text = $"{timerString} left,\n Score {score} / {thresholdScore}";
+
+            if(score >= thresholdScore){
+                thresholdEvent.InvokeEvent();
+            }
 
             if(timer <= 0)
             {

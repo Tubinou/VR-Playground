@@ -10,15 +10,13 @@ public class Debugger : MonoBehaviour
     int triggerButton = 0;
     int grabButton = 0;
 
-    void Start()
-    {
-        
-    }
+    public static string debugText;
 
-    // Update is called once per frame
     void Update()
     {
-        
+        if(debugText != string.Empty){
+            textField.text = $"Debug text {debugText}";
+        }
     }
 
     public void TriggerPressed()

@@ -6,9 +6,13 @@ using UnityEngine.UI;
 public class SquashWall : MonoBehaviour
 {
     [SerializeField] int scoreThreshold = 10;
-    [SerializeField] GameEvent thresholdEvent;
+    [SerializeField] GameEvent squashGameCompleted;
     [SerializeField] Text ScoreText;
     [SerializeField] float gameLength = 60f;
+    [SerializeField] AudioClip[] SquashHitClips;
+
+    bool isDone = false;
+    AudioSource audioSource;
 
     public string currentText = $"Max bounces: 0";
     public float timer;
@@ -16,7 +20,9 @@ public class SquashWall : MonoBehaviour
     public int bestScore;
     public bool gameOn = false;
 
-    bool isDone = false;
+    private void Start() {
+        audioSource = GetComponent<AudioSource>();
+    }
 
     private void Update() 
     {
@@ -37,18 +43,25 @@ public class SquashWall : MonoBehaviour
         {
             if(gameOn)
             {
-                Debug.Log("point");
                 currentScore += 1;
-                if(currentScore >= scoreThreshold)
+                PlaySquashHitClip();
+
+                if(!isDone && currentScore >= scoreThreshold)
                 {
                     ThresholdReached();
                 }
+
                 return;
             }
 
-            Debug.Log("game started");
             StartSquashGame();
         }
+    }
+
+    void PlaySquashHitClip(){
+        AudioClip currentClip = SquashHitClips[UnityEngine.Random.Range(0, SquashHitClips.Length)];
+        audioSource.clip = currentClip;
+        audioSource.Play();
     }
 
     public void StartSquashGame()
@@ -60,16 +73,14 @@ public class SquashWall : MonoBehaviour
 
         gameOn = true;
         timer = gameLength;
+        PlaySquashHitClip();
         currentScore = 1;
     }
 
     public void ThresholdReached()
     {
-        if(!isDone)
-        {
-            thresholdEvent.InvokeEvent();
-            isDone = true;
-        }        
+        isDone = true;
+        squashGameCompleted.InvokeEvent();
     }
 
     public void StopSquashGame()

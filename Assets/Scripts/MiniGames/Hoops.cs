@@ -8,31 +8,34 @@ public class Hoops : MonoBehaviour
     [SerializeField] TextMeshPro scoreText;
     [SerializeField] int scoreThreshold = 10;
     [SerializeField] GameEvent thresholdEvent;
+    [SerializeField] AudioClip[] successfulHoopClips;
 
+    AudioSource audioSource;
     public int score;
 
     void Start()
     {
-        scoreText.text = $"Let's play hoops!";
+        scoreText.text = $"Let's play\nhoops!";
+        audioSource = GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    void PlaySuccessfullHoopClip(){
+        audioSource.clip = successfulHoopClips[UnityEngine.Random.Range(0, successfulHoopClips.Length)];
+        audioSource.Play();
     }
 
     private void OnTriggerEnter(Collider other) 
     {
         if(other.CompareTag("Hoops"))
         {
-            score += 1;
+            PlaySuccessfullHoopClip();
+            score += 1;            
             scoreText.text = $"Sweet! {score} / {scoreThreshold}";
         }
 
         if(score >= scoreThreshold)
         {
-            thresholdEvent?.InvokeEvent();
+            thresholdEvent.InvokeEvent();
         }
     }
 }

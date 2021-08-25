@@ -13,6 +13,9 @@ public class SpawnCannon : MonoBehaviour
     [SerializeField] Text SizeText;    
     [SerializeField] Transform SpawnPosition;
     [SerializeField] GameObject SpawnPrefab;
+    [SerializeField] AudioClip[] cannonShotAudioClips;
+
+    AudioSource audioSource;
 
     public float currentForce = 20;
     public string currentText = $"Power: 20/100";
@@ -22,7 +25,7 @@ public class SpawnCannon : MonoBehaviour
 
     void Start()
     {
-        
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -92,6 +95,12 @@ public class SpawnCannon : MonoBehaviour
             projectileRB.mass = currentMass;
         }
 
-        projectileRB.AddForce(SpawnPosition.up * currentForce, ForceMode.Impulse);
+        PlayCannonShotClip();
+        projectileRB.AddForce(transform.up * currentForce, ForceMode.Impulse);
+    }
+
+    void PlayCannonShotClip(){
+        audioSource.clip = cannonShotAudioClips[UnityEngine.Random.Range(0, cannonShotAudioClips.Length)];
+        audioSource.Play();
     }
 }

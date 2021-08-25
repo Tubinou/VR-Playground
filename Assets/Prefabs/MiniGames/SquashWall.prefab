@@ -188,8 +188,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d3b6298a7f953442ad3d14fb1d5d2c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scoreThreshold: 3
+  thresholdEvent: {fileID: 0}
   ScoreText: {fileID: 154884698313654309}
   gameLength: 60
+  SquashHitClips:
+  - {fileID: 8300000, guid: 58bef0cac07c86e4697c41876d9fd063, type: 3}
+  - {fileID: 8300000, guid: 42f4327c1be04514fa327d2ea9c77db4, type: 3}
   currentText: 'Max bounces: 0'
   timer: 0
   currentScore: 0

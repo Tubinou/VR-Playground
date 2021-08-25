@@ -9,6 +9,8 @@ TagManager:
   - WhackHammer
   - Hoops
   - FireRange
+  - WreckingBall
+  - Socket
   layers:
   - Default
   - TransparentFX
@@ -18,8 +20,8 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
+  - ignoreRayInteractor
+  - BlockLight
   - 
   - 
   - 

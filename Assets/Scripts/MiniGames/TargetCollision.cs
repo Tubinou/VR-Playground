@@ -6,7 +6,9 @@ using TMPro;
 public class TargetCollision : MonoBehaviour
 {
     [SerializeField] TextMeshPro targetText;
-    [SerializeField] TextMeshPro scoreBoardText;
+    [SerializeField] AudioClip[] targetHitClips;
+
+    AudioSource audioSource;
 
     FireRangeScore scoreBoard;
     string scoreString;
@@ -18,6 +20,7 @@ public class TargetCollision : MonoBehaviour
     {
         scoreBoard = GameObject.FindGameObjectWithTag("FireRange").GetComponent<FireRangeScore>();
         targetText.gameObject.SetActive(false);
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -33,31 +36,39 @@ public class TargetCollision : MonoBehaviour
     }
     
     private void OnCollisionEnter(Collision other) {            
-            if(other.collider.CompareTag("Catalyst") && other.GetContact(0).thisCollider.name == "Outer")
+            if(scoreBoard.gameOn && other.collider.CompareTag("Catalyst") && other.GetContact(0).thisCollider.name == "Outer")
             {
                 targetText.gameObject.SetActive(true);
                 targetText.text = $"Outer frame,\n1 point";
                 timer = initialTimer;
 
                 scoreBoard.UpdateScore(1);
+                PlayTargetHit(1);
             }
 
-            else if(other.collider.CompareTag("Catalyst") && other.GetContact(0).thisCollider.name == "Middle")
+            else if(scoreBoard.gameOn && other.collider.CompareTag("Catalyst") && other.GetContact(0).thisCollider.name == "Middle")
             {
                 targetText.gameObject.SetActive(true);
                 targetText.text = $"Inner frame,\n2 points!";
                 timer = initialTimer;
 
                 scoreBoard.UpdateScore(2);
+                PlayTargetHit(2);
             }
 
-            else if(other.collider.CompareTag("Catalyst") && other.GetContact(0).thisCollider.name == "BullsEye")
+            else if(scoreBoard.gameOn && other.collider.CompareTag("Catalyst") && other.GetContact(0).thisCollider.name == "BullsEye")
             {
                 targetText.gameObject.SetActive(true);
                 targetText.text = $"Bull's eye!\n3 point~! <3";
                 timer = initialTimer;
 
                 scoreBoard.UpdateScore(3);
+                PlayTargetHit(3);
             }
+    }
+
+    void PlayTargetHit(int points){
+        audioSource.clip = targetHitClips[points - 1];
+        audioSource.Play();
     }
 }

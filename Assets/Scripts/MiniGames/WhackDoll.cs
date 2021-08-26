@@ -4,61 +4,56 @@ using UnityEngine;
 
 public class WhackDoll : MonoBehaviour
 {
-    [SerializeField] GameObject WhatDollsPrefab;
-    [SerializeField] GameEvent WhackScoreUp;
-    [SerializeField] Transform Top;
-    [SerializeField] Transform Bottom;
-    public bool isMoving = false;
-    public bool inGame = true;
+    [SerializeField] Vector3 moveVector = new Vector3(0f, 0.1f, 0f);    
+    [SerializeField] GameEvent WhackFailed;
 
-    Transform originalTransform;
-    public float speed = 0.2f;
+    public bool inGame;
+    public float maxDistance = 0.9f;
+    public float minDistance = 0.1f;
+    
+    Vector3 originalPosition;
+    Quaternion originalRotation;
     Rigidbody myrb;
+    bool hasFlipped = false;
 
-    private void Start() 
+    private void Awake() 
     {
-        isMoving = false;
-        originalTransform = transform;
+        inGame = true;
         myrb = GetComponent<Rigidbody>();
-    }
-
-    private void OnTriggerEnter(Collider other) 
-    {        
-        if(isMoving && other.CompareTag("WhackHammer"))
-        {
-            isMoving = false;
-            GameObject newDoll = Instantiate(WhatDollsPrefab, originalTransform);
-            WhackDoll newWhackDoll = newDoll.GetComponent<WhackDoll>();
-
-            if(newWhackDoll)
-            {
-                newWhackDoll.Top = Top;
-                newWhackDoll.Bottom = Bottom;
-            }
-            myrb.isKinematic = false;
-            WhackScoreUp.InvokeEvent();
-        }
+        myrb.useGravity = false;
+        originalPosition = transform.position;        
+        originalRotation = transform.rotation;
     }
 
     private void FixedUpdate() 
     {
-        if(!isMoving)
-        {
-            return;
-        }
+        if(inGame){
+            if(float.IsNaN(maxDistance))
+            {
+                return;
+            }
+            
+            Vector3 positionVector = transform.position - originalPosition;
 
-        if(transform.position.y <= Bottom.position.y)
-        {
-            speed *= -1;
-            transform.position = originalTransform.position;
-            isMoving = false;
-        }
-        
-        if(transform.position.y >= Top.position.y)
-        {
-            speed *= -1;
-        }
+            if(!hasFlipped)
+            {            
+                if(positionVector.magnitude >= maxDistance)
+                {
+                    moveVector *= -1;
+                    hasFlipped = !hasFlipped;
+                }
+            }
 
-        transform.position = new Vector3(transform.position.x, transform.position.y + speed, transform.position.z);     
+            if(hasFlipped)
+            {
+                if(positionVector.magnitude <= minDistance)
+                {
+                    WhackFailed.InvokeEvent();
+                    Destroy(this.gameObject);
+                }
+            }        
+            myrb.position = myrb.position + moveVector;
+            transform.Translate(moveVector);
+        }        
     }
 }

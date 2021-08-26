@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,8 +9,11 @@ public class WhackAMole : MonoBehaviour
     [SerializeField] GameEvent ThresholdEvent;
     [SerializeField] Text ScoreText;
     [SerializeField] float gameLength = 60f;
-    [SerializeField] int ActiveDollsNum = 2;
-    [SerializeField] WhackDoll[] WhackDolls;
+    [SerializeField] int maxActiveDolls = 3;
+    [SerializeField] GameObject[] WhackDolls;
+    [SerializeField] GameObject[] WhackSlots;
+
+    int activeDolls = 0;
 
     public string currentText = $"Max hits: 0";
     public float timer;
@@ -20,16 +23,17 @@ public class WhackAMole : MonoBehaviour
     public bool isDone = false;
     GameObject doll;
 
-    int currentActiveDollNum = 0;
     GameObject CurrentWhackable;
     List<Vector3> OriginalPositions = new List<Vector3>();
 
-    private void Start() {
-        for(int i = 0; i <= WhackDolls.Length -1; i++)
-        {
-            OriginalPositions.Add(WhackDolls[i].transform.position);
+    public void ActivateRandomWhackDoll(){
+        if(activeDolls < maxActiveDolls){
+            int randomPrefab = (int)UnityEngine.Random.Range(0f, WhackDolls.Length);
+            int randomSlot = (int)UnityEngine.Random.Range(0f, WhackSlots.Length);
+            Transform slot = WhackSlots[randomSlot].transform;
+            GameObject newDoll = Instantiate(WhackDolls[randomPrefab], slot.position, Quaternion.identity);
+            activeDolls++;
         }
-        doll = WhackDolls[0].gameObject;
     }
 
     private void Update() 
@@ -37,34 +41,13 @@ public class WhackAMole : MonoBehaviour
         if(gameOn)
         {
             ScoreText.text = $"{timer.ToString("{#.00}")} seconds left! You scored {currentScore} / {ThresholdScore} hits";
-            timer -= Time.deltaTime;            
+            timer -= Time.deltaTime;
 
             if(timer <= 0)
             {
                 StopWhacking();
                 return;
-            }
-
-            foreach(WhackDoll whackable in WhackDolls)
-            {
-                if(whackable.inGame == false)
-                {
-                    GameObject newDoll = Instantiate(doll, doll.transform);
-                    WhackDoll whackdoll = newDoll.GetComponent<WhackDoll>();
-                    whackdoll.isMoving = true;
-                }
-
-                currentActiveDollNum = 0;
-                if(whackable.isMoving)
-                {
-                    currentActiveDollNum += 1;                    
-                }
-
-                else if(currentActiveDollNum < ActiveDollsNum)
-                {
-                    whackable.isMoving = true;
-                }
-            }
+            }            
 
             if(currentScore >= ThresholdScore)
             {
@@ -80,44 +63,54 @@ public class WhackAMole : MonoBehaviour
         {
             ThresholdEvent?.InvokeEvent();
             isDone = true;
-        }
-
-        ScoreText.text = $"Good! Now go and break some walls";        
+            StopWhacking();
+        }        
     }
 
     public void OnSuccessFulHit() 
     {
-        currentScore += 1;
+        if(gameOn){
+            currentScore += 1;
+            activeDolls--;
+            Invoke("ActivateRandomWhackDoll", 0.75f);
+        }                
     }
 
-    public void StartWhacking()
-    {
+    public void OnDollEscaped(){
+        if(gameOn){
+            activeDolls--;
+            Invoke("ActivateRandomWhackDoll", 0.5f);
+        }                
+    }
+
+    public void StartWhacking(){
         if(!ScoreText)
         {
             return;
         }
 
-        gameOn = true;
-        timer = gameLength;
-        currentScore = 0;
-        Debug.Log($"WhackAMole game started");
+        if(!gameOn){
+            gameOn = true;
+            timer = gameLength;
+            currentScore = 0;
+            ActivateRandomWhackDoll();
+        }        
     }
 
     public void StopWhacking()
     {
         gameOn = false;
 
-        if(currentScore >= bestScore)
-        {
+        if(currentScore >= bestScore){
             bestScore = currentScore;
             ScoreText.text = $"New highscore! Your record is: {currentScore} ";
-            Debug.Log($"WhackAMole game highscore");
-            return;
         }
 
-        ScoreText.text = $"Time's up! you managed {currentScore} bounces!\n Best score is {bestScore}";
+        else{
+            ScoreText.text = $"Good round! you managed {currentScore} bounces!\n Best score is {bestScore}";
+        }
+
         currentScore = 0;
         timer = gameLength;
-        Debug.Log($"WhackAMole game Stopped");
     }
 }

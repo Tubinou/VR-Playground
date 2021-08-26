@@ -28,7 +28,7 @@ public class SquashWall : MonoBehaviour
     {
         if(gameOn)
         {
-            ScoreText.text = $"{timer.ToString("{#.00}")} seconds left!\nCurrent bounces: {currentScore} / {scoreThreshold}";
+            ScoreText.text = $"{timer.ToString("#.00")} seconds left!\nCurrent bounces: {currentScore} / {scoreThreshold}";
             timer -= Time.deltaTime;            
             if(timer <= 0)
             {
